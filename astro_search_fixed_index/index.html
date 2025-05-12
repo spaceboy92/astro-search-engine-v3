@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ASTRO Search Engine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #0a0a23;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .light-theme {
+      background: #f0f0f0;
+      color: #000;
+    }
+
+    .astro-logo {
+      font-size: 3em;
+      font-weight: bold;
+      color: #7df9ff;
+      text-align: center;
+      margin-top: 40px;
+      letter-spacing: 5px;
+      animation: fadeIn 2s ease-out;
+    }
+
+    .astro-logo img {
+      width: 100px;
+      height: auto;
+      animation: bounce 1s infinite alternate;
+    }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-10px); }
+    }
+
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 30px;
+      animation: slideIn 1s ease-out;
+    }
+
+    .search-box {
+      width: 50%;
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      outline: none;
+      transition: transform 0.3s ease;
+    }
+
+    .search-box:focus {
+      transform: scale(1.05);
+    }
+
+    .suggestions {
+      background: #1a1a3c;
+      width: 50%;
+      margin-top: 5px;
+      border-radius: 8px;
+      color: #7df9ff;
+    }
+
+    .suggestions li {
+      list-style: none;
+      padding: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .suggestions li:hover {
+      background: #333;
+    }
+
+    .results {
+      width: 80%;
+      margin: 0 auto;
+      margin-top: 30px;
+      opacity: 0;
+      animation: fadeInResults 1.5s ease-out forwards;
+    }
+
+    .result-item {
+      background: #1a1a3c;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .light-theme .result-item {
+      background: #ffffff;
+    }
+
+    a {
+      color: #7df9ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    select, button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    ul {
+      padding: 0;
+    }
+
+    li {
+      color: white;
+    }
+
+    .light-theme li {
+      color: black;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      0% { transform: translateY(-50px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeInResults {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .games-section {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .games-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+
+    .games-buttons a button {
+      padding: 15px 25px;
+      font-size: 16px;
+      background: #1a1a3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .games-buttons a button:hover {
+      background: #333;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="astro-logo">
+    <img src="https://cdn-icons-png.flaticon.com/512/3405/3405856.png" alt="ASTRO Logo"> 
+    AST<span>R</span>O
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" class="search-box" placeholder="Search the universe..." onkeydown="if(event.key==='Enter') searchAstro()" />
+    <ul id="suggestions" class="suggestions"></ul>
+    <div class="controls">
+      <button onclick="startVoiceSearch()">🎤 Voice Search</button>
+      <button onclick="toggleTheme()">🌓 Toggle Theme</button>
+      <select id="searchType" onchange="searchAstro()">
+        <option value="">All</option>
+        <option value="image">Images</option>
+        <option value="news">News</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="results" id="results"></div>
+
+  <!-- 📰 News Feed Section -->
+  <h2 style="text-align:center; margin-top:40px;">🚀 Latest Tech News</h2>
+  <div style="max-width: 90%; margin: auto; border-radius: 10px; overflow: hidden;">
+    <!-- start feedwind code -->
+    <script type="text/javascript" src="https://feed.mikle.com/js/fw-loader.js" preloader-text="Loading" data-fw-param="172899/"></script>
+    <!-- end feedwind code -->
+  </div>
+
+  <!-- 🎮 Games Section -->
+  <div class="games-section">
+    <h2>🎮 Play Offline Games</h2>
+    <div class="games-buttons">
+      <a href="dino.html" target="_blank"><button>🦖 Dino Game</button></a>
+      <a href="racing.html" target="_blank"><button>🏎️ Racing Game</button></a>
+      <a href="space.html" target="_blank"><button>🛰️ Space Shooter</button></a>
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = 'AIzaSyDDv1xt5vh1zyerKg4I8hJB3zxBxc-lsJI';
+    const CX = '61eb3ddcf538d42bf';
+
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsBox = document.getElementById('suggestions');
+
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase();
+      if (q.length > 2) {
+        const dummySuggestions = ['black holes', 'nebula', 'mars', 'space time'];
+        const filtered = dummySuggestions.filter(item => item.includes(q));
+        suggestionsBox.innerHTML = filtered.map(item => `<li onclick="selectSuggestion('${item}')">${item}</li>`).join('');
+      } else {
+        suggestionsBox.innerHTML = '';
+      }
+    });
+
+    function selectSuggestion(text) {
+      searchInput.value = text;
+      suggestionsBox.innerHTML = '';
+      searchAstro();
+    }
+
+    function startVoiceSearch() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.start();
+      recognition.onresult = function(event) {
+        searchInput.value = event.results[0][0].transcript;
+        searchAstro();
+      };
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+    }
+
+    function searchAstro() {
+      const query = searchInput.value.trim();
+      if (!query) {
+        alert("Please enter a search query.");
+        return;
+      }
+
+      saveHistory(query);
+      const type = document.getElementById('searchType').value;
+      let extra = '';
+      if (type === 'image') extra = '&searchType=image';
+      if (type === 'news') extra = '&tbm=nws';
+
+      const url = `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${CX}&q=${encodeURIComponent(query)}${extra}`;
+
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '<p>Loading...</p>';
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          resultsDiv.innerHTML = '';
+          if (data.items) {
+            data.items.forEach(item => {
+              const html = `
+                <div class="result-item">
+                  <a href="${item.link}" target="_blank"><h2>${item.title}</h2></a>
+                  <p>${item.snippet}</p>
+                </div>
+              `;
+              resultsDiv.innerHTML += html;
+            });
+          } else {
+            resultsDiv.innerHTML = '<p>No results found.</p>';
+          }
+          displayHistory();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          resultsDiv.innerHTML = '<p>Failed to fetch results.</p>';
+        });
+    }
+
+    function saveHistory(query) {
+      let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+      history.unshift(query);
+      history = history.slice(0, 5);
+      localStorage.setItem('searchHistory', JSON.stringify(history));
+    }
+
+    function displayHistory() {
+      const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+      const resultsDiv = document.getElementById('results');
+      if (history.length) {
+        resultsDiv.innerHTML += '<h3>Recent Searches:</h3><ul>' +
+          history.map(q => `<li onclick="loadFromHistory('${q}')">${q}</li>`).join('') +
+          '</ul>';
+      }
+    }
+
+    function loadFromHistory(query) {
+      searchInput.value = query;
+      searchAstro();
+    }
+  </script>
+
+</body>
+</html>
